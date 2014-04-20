@@ -11,46 +11,41 @@
 #include <stdio.h>
 #include "helpers.h"
 
+#define LIMIT 65536
 /**
  * Returns true if value is in array of n values, else false.
  */
 
 // global variable required to pass between functions. 
-// TODO: figure out a way not to do it like this. 
-int found = 0;
-void recursivesearch(int a, int b[], int first, int last)
-{
-    int middle = (first + last) / 2;
-    if (first == last)
-    {
-        if (b[first] == a)
-        {
-            found = 1;
-        }
-        else 
-        {
-            found = 0;
-        }
-    }
-    else if (a == b[middle])
-    {   
-        found = 1;
-    }
-    else if (a < b[middle])
-    {  
-        recursivesearch(a, b, first, middle-1);
-    }     
-    else
-    {
-        recursivesearch(a, b, middle+1, last);
-    }
-    return;
-}
- 
+bool bSearch(int a, int b[], int l, int u);
+
 bool search(int value, int values[], int n)
 {
-    recursivesearch(value, values, 0, n-1);
-    return (found == 1);
+    return bSearch(value, values, 0, n-1);
+}
+
+bool bSearch(int a, int b[], int l, int u)
+{
+    if(l <= u)
+    {
+        int mid = (l + u) / 2;
+        if (a == b[mid])
+        {
+            return true;
+        }
+        else if (a < b[mid])
+        {
+            return bSearch(a, b, l, mid - 1);
+        }
+        else
+        {
+            return bSearch(a, b, mid + 1, u);
+        }
+    }
+    else
+    {
+        return false;
+    }
 }
 
 /**
@@ -58,21 +53,32 @@ bool search(int value, int values[], int n)
  */
 void sort(int values[], int n)
 {
-    int location = 0;
-    for (int i = 0; i < n; i++)
-        {
-            printf ("%d ", values[i]);
-        }
-    printf("\n");
+    printf ("%i, %i\n", values[0], values[n-1]);
+
     // TODO implement sorting algorithm
-    
-    
-    
-    // print result
-    for (int i = 0; i < n; i++)
+    int count[LIMIT] = {0};
+
+    // count the values in the array
+	for (int i = 0; i < n; i++)
     {
-        printf ("%d ", values[i]);  
+    	if (values[i] < 0 || values[i] > LIMIT)
+    	{
+    	    return;
+    	}
+    	count[ values[i] ]++;
     }
-    printf("\n"); 
+    
+    for (int i = 0, j = 0; j < n; i++)
+	{
+	    while (count[i] > 0)
+	    {   
+		    values[j] = i;
+		    j++;
+		    count[i]--;
+	    }
+	}
+	
+    // print result
+    printf ("%i, %i\n ", values[0], values[n-1]);  
     return;
 }
